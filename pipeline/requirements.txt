@@ -1,0 +1,56 @@
+# ──────────────────────────────────────────────────────────────────────────
+# Bharat Climate Twin — data-pipeline dependencies
+# ──────────────────────────────────────────────────────────────────────────
+# IMPORTANT: the offline-demo path (synthetic.py + export.py) is engineered to
+# run on the PYTHON STANDARD LIBRARY ALONE. Everything below is for the REAL,
+# network-backed ingestion/harmonization/fusion path and for higher-fidelity
+# synthetic generation. `pipeline/run_pipeline.py --mode synthetic` will still
+# produce all serving artifacts even if none of these are installed.
+#
+# Install with:  pip install -r pipeline/requirements.txt
+# Pins are loose (>=) so the pipeline tracks current upstream APIs.
+# ──────────────────────────────────────────────────────────────────────────
+
+# ---- Core array / dataframe / N-D labelled data ----
+numpy>=1.24
+pandas>=2.0
+scipy>=1.10
+
+# ---- N-D climate cubes + cloud-native storage ----
+xarray>=2024.1.0
+zarr>=2.16
+netCDF4>=1.6
+dask[array]>=2024.1.0
+
+# ---- Geospatial raster I/O (COG export, CRS, regridding helpers) ----
+rioxarray>=0.15
+rasterio>=1.3
+
+# ---- O(1) spatial indexing ----
+h3>=4.0
+
+# ──────────────────────────────────────────────────────────────────────────
+# Data-source access clients (each ingest/*.py guards its import so a missing
+# client never crashes the pipeline — the orchestrator falls back to synthetic)
+# ──────────────────────────────────────────────────────────────────────────
+
+# IMD gridded _Bin rainfall/Tmax/Tmin (mandated national anchor)
+imdlib>=0.1.21
+
+# Google Earth Engine (IMERG / ERA5-Land / MODIS LST / CHIRPS / GSMaP mirrors)
+earthengine-api>=0.1.380
+
+# Copernicus Climate Data Store (ERA5 / ERA5-Land)
+cdsapi>=0.7.0
+
+# NASA Earthdata (GPM IMERG / MODIS / SMAP / GRACE-FO)
+earthaccess>=0.9.0
+
+# STAC clients (Microsoft Planetary Computer: Landsat ST / Sentinel-1/2/3)
+pystac-client>=0.7.0
+planetary-computer>=1.0.0
+
+# ---- Optional but recommended for real ingestion ----
+# h5py>=3.10          # INSAT-3D/3DR L2B HDF5 (MOSDAC)
+# s3fs>=2024.2.0      # anonymous AWS Open Data (nsf-ncar-era5, himawari, sentinel-cogs)
+# xesmf>=0.8.0        # conservative/bilinear regridding (needs ESMF; conda-forge)

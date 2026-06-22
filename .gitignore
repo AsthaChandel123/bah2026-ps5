@@ -1,0 +1,89 @@
+# ──────────────────────────────────────────────────────────────────────────
+# Bharat Climate Twin — .gitignore
+# ──────────────────────────────────────────────────────────────────────────
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+.env
+.envrc
+
+# ---- Node / Next.js / frontend ----
+node_modules/
+.next/
+out/
+dist/
+.turbo/
+*.tsbuildinfo
+.vercel/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ---- Large data artifacts (NEVER commit raw / heavy cubes) ----
+data/raw/
+*.zarr/
+*.zarr
+*.nc
+*.nc4
+*.grd
+*.GRD
+*.grib
+*.grib2
+*.tif
+*.tiff
+*.cog
+*.hdf
+*.hdf5
+*.h5
+*.pmtiles
+*.parquet
+
+# ---- Credentials / secrets (data-source auth) ----
+.cdsapirc
+.netrc
+config.json
+mosdac_config.json
+service-account*.json
+*.pem
+.dev.vars
+
+# ---- OS / editor cruft ----
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ──────────────────────────────────────────────────────────────────────────
+# EXPLICIT KEEPS — the offline-demo serving artifacts MUST be committed.
+# (These small JSON files are the zero-network demo dataset.)
+# ──────────────────────────────────────────────────────────────────────────
+!data/processed/sample/
+!data/processed/sample/*.json
+!frontend/public/data/
+!frontend/public/data/*.json
