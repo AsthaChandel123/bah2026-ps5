@@ -1,0 +1,47 @@
+# Bharat Climate Twin — full-stack demo orchestration.
+# ISRO BAH 2026 PS5 · AI-Powered Digital Twin of India's Climate
+#
+#   docker compose up --build      # build + run backend (:8000) and UI (:3000)
+#   # → dashboard  http://localhost:3000
+#   # → API + docs http://localhost:8000/docs
+#
+# The frontend is built with NEXT_PUBLIC_API_BASE=http://localhost:8000/api so
+# the browser talks to the FastAPI service (which serves the same artifacts at
+# /api/* plus the richer query endpoints). Because NEXT_PUBLIC_* is inlined into
+# the client bundle at *build* time, it is passed as a build-arg (not just env).
+
+services:
+  backend:
+    # The backend Dockerfile bakes in data/processed/sample, which lives OUTSIDE
+    # ./backend — so the build context is the repo root with an explicit
+    # dockerfile path (equivalent to `docker build -f backend/Dockerfile .`).
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    image: bct-backend
+    ports:
+      - "8000:8000"
+    environment:
+      BCT_DATA_DIR: /app/data/processed/sample
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/api/health').status==200 else 1)"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # Inlined into the client bundle at build time (Next.js NEXT_PUBLIC_*).
+        NEXT_PUBLIC_API_BASE: http://localhost:8000/api
+    image: bct-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      # Mirrors the build-arg; harmless at runtime, documents the contract.
+      NEXT_PUBLIC_API_BASE: http://localhost:8000/api
+    depends_on:
+      - backend

@@ -50,12 +50,16 @@ to switch it to this API (same schema, same filenames):
 
 ```bash
 # frontend/.env.local
-NEXT_PUBLIC_API_BASE=http://localhost:8000
+NEXT_PUBLIC_API_BASE=http://localhost:8000/api
 ```
 
-`api.ts` then fetches `${NEXT_PUBLIC_API_BASE}/metadata.json`,
-`${NEXT_PUBLIC_API_BASE}/fields_daily.json`, etc. — all of which this service
-serves verbatim. CORS is enabled for all origins for the demo.
+The data layer requests **namespaced** endpoints `${NEXT_PUBLIC_API_BASE}/<name>`
+with **no `.json` suffix**, so the base must include the `/api` prefix — a bare
+`http://localhost:8000` would request `/metadata` (etc.) and **404**. Artifacts
+are served at `/api/<name>` (e.g. `/api/metadata`, `/api/forecast`); `api.ts`
+then fetches `${NEXT_PUBLIC_API_BASE}/metadata`,
+`${NEXT_PUBLIC_API_BASE}/fields_daily`, etc. — all of which this service serves
+verbatim. CORS is enabled for all origins for the demo.
 
 ---
 

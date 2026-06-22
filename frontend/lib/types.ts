@@ -155,6 +155,25 @@ export interface Metrics {
   baselines?: Record<string, unknown>;
 }
 
+/** Short-range AI forecast frame (data/forecast.json).
+ * Indexed [lead][lat][lon]; `leads`/`dates` are length L (e.g. 1..7 days). */
+export interface Forecast {
+  issue_date: string;
+  leads: number[];
+  dates: string[];
+  lats: number[];
+  lons: number[];
+  rainfall: number[][][];
+  tmax: number[][][];
+  tmin: number[][][];
+  /** Per-lead, per-cell 1-sigma (absolute units) for each base variable. */
+  uncertainty: Record<BaseVariableKey, number[][][]>;
+  units?: Record<string, string>;
+  model?: string;
+  method?: string;
+  generated?: string;
+}
+
 /** The scenario the user is currently exploring (what-if controls). */
 export interface ScenarioState {
   temp_offset: number;

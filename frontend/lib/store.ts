@@ -7,6 +7,7 @@ import type {
   BaseVariableKey,
   Climatology,
   FieldsDaily,
+  Forecast,
   Metadata,
   Metrics,
   Scenarios,
@@ -29,6 +30,7 @@ interface AppData {
   scenarios: Scenarios | null;
   sources: Sources | null;
   metrics: Metrics | null;
+  forecast: Forecast | null;
 }
 
 interface AppState extends AppData {
@@ -48,6 +50,7 @@ interface AppState extends AppData {
   region: RegionKey;
   opacity: number; // 0..1 field opacity
   showHexAggregation: boolean;
+  showForecast: boolean; // show the 7-day forecast card in the chart dock
   activePanel: "layers" | "whatif" | "sources" | "metrics" | "about" | null;
 
   // --- actions ---
@@ -68,6 +71,8 @@ interface AppState extends AppData {
   setRegion: (r: RegionKey) => void;
   setOpacity: (o: number) => void;
   setShowHexAggregation: (b: boolean) => void;
+  setShowForecast: (b: boolean) => void;
+  toggleForecast: () => void;
   setActivePanel: (p: AppState["activePanel"]) => void;
 }
 
@@ -85,6 +90,7 @@ export const useStore = create<AppState>((set, get) => ({
   scenarios: null,
   sources: null,
   metrics: null,
+  forecast: null,
 
   status: "idle",
   error: null,
@@ -100,6 +106,7 @@ export const useStore = create<AppState>((set, get) => ({
   region: "marathwada",
   opacity: 0.85,
   showHexAggregation: false,
+  showForecast: false,
   activePanel: "layers",
 
   setData: (d) => set((s) => ({ ...s, ...d })),
@@ -126,5 +133,7 @@ export const useStore = create<AppState>((set, get) => ({
   setRegion: (region) => set({ region }),
   setOpacity: (opacity) => set({ opacity }),
   setShowHexAggregation: (showHexAggregation) => set({ showHexAggregation }),
+  setShowForecast: (showForecast) => set({ showForecast }),
+  toggleForecast: () => set((s) => ({ showForecast: !s.showForecast })),
   setActivePanel: (activePanel) => set({ activePanel }),
 }));

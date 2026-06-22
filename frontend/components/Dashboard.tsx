@@ -52,15 +52,17 @@ export default function Dashboard() {
           dataApi.scenarios(),
           dataApi.sources(),
           dataApi.metrics(),
+          dataApi.forecast(),
         ]);
         if (cancelled) return;
-        const [clim, unc, scen, src, met] = optional;
+        const [clim, unc, scen, src, met, fc] = optional;
         setData({
           climatology: clim.status === "fulfilled" ? clim.value : null,
           uncertainty: unc.status === "fulfilled" ? unc.value : null,
           scenarios: scen.status === "fulfilled" ? scen.value : null,
           sources: src.status === "fulfilled" ? src.value : null,
           metrics: met.status === "fulfilled" ? met.value : null,
+          forecast: fc.status === "fulfilled" ? fc.value : null,
         });
         setStatus("ready");
       } catch (e) {

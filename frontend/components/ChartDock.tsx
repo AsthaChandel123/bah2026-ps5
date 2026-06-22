@@ -10,11 +10,17 @@ const PointTimeSeries = dynamic(() => import("@/components/PointTimeSeries"), {
 const ClimatologyPanel = dynamic(() => import("@/components/ClimatologyPanel"), {
   ssr: false,
 });
+const ForecastPanel = dynamic(() => import("@/components/ForecastPanel"), {
+  ssr: false,
+});
 
 export default function ChartDock() {
   const variable = useStore((s) => s.variable);
   const selectedCell = useStore((s) => s.selectedCell);
   const setSelectedCell = useStore((s) => s.setSelectedCell);
+  const forecast = useStore((s) => s.forecast);
+  const showForecast = useStore((s) => s.showForecast);
+  const toggleForecast = useStore((s) => s.toggleForecast);
   const baseVar = baseVariableOf(variable);
   const label =
     baseVar === "rainfall" ? "Rainfall" : baseVar === "tmax" ? "Max Temp" : "Min Temp";
@@ -36,6 +42,35 @@ export default function ChartDock() {
         </div>
         <PointTimeSeries />
       </div>
+
+      {/* 7-Day forecast: only offered when the artifact loaded. Toggleable so it
+          doesn't crowd the dock by default. */}
+      {forecast &&
+        (showForecast ? (
+          <div className="panel chart-card">
+            <div className="chart-head">
+              <span className="ttl">
+                {forecast.leads.length}-day forecast · {label}
+              </span>
+              <button
+                className="btn ghost"
+                style={{ padding: "3px 8px", fontSize: 10 }}
+                onClick={toggleForecast}
+              >
+                hide
+              </button>
+            </div>
+            <ForecastPanel />
+          </div>
+        ) : (
+          <button
+            className="btn ghost forecast-toggle"
+            style={{ alignSelf: "flex-start", padding: "5px 10px", fontSize: 11 }}
+            onClick={toggleForecast}
+          >
+            ▸ Show {forecast.leads.length}-day forecast
+          </button>
+        ))}
 
       <div className="panel chart-card">
         <div className="chart-head">
