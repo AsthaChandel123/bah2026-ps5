@@ -1,0 +1,12 @@
+# Bharat Climate Twin — O(1) serving API
+#
+# Hard requirements (the service runs with ONLY these + the Python stdlib):
+fastapi>=0.110
+uvicorn[standard]>=0.27
+pydantic>=2.5
+
+# Optional accelerators — guarded imports, the API works without them:
+#   numpy  -> vectorised what-if recompute & aggregations
+#   h3     -> real Uber H3 res-4 cell ids (else a deterministic synthetic hash)
+numpy>=1.24            # optional
+h3>=4.0                # optional

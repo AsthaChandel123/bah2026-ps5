@@ -1,0 +1,18 @@
+# models/ artifacts — keep the dir, ignore heavy fitted weights.
+# The committed serving artifacts live in data/processed/sample/ and
+# frontend/public/data/ (see root .gitignore EXPLICIT KEEPS), NOT here.
+
+# Large / binary fitted models (torch weights, big pickles, boosters).
+artifacts/*.pt
+artifacts/*.pth
+artifacts/*.onnx
+artifacts/*.ubj
+artifacts/*.bin
+artifacts/*.joblib
+artifacts/*.npz
+artifacts/*.npy
+
+# Keep small JSON/text metadata if any is written, and keep the dir itself.
+!artifacts/
+!artifacts/.gitkeep
+!artifacts/*.json
