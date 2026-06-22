@@ -1,0 +1,43 @@
+# Cloudflare Worker config for the Bharat Climate Twin edge serving stub.
+#
+# This demonstrates the O(1) edge design from ARCHITECTURE.md §11:
+#   • R2 bucket  -> precomputed JSON artifacts + COG/PMTiles/Zarr/GeoParquet
+#                   (zero egress, HTTP range reads).
+#   • KV namespace -> {h3_cell -> series}, {scenario_hash -> delta}, hot cache
+#                     (global O(1) hot read, 0.5-10 ms).
+#
+# Quick start (after `npm i -g wrangler` and `wrangler login`):
+#   1. Create the KV namespace:
+#        wrangler kv:namespace create ARTIFACTS_KV
+#      then paste the returned id below.
+#   2. Create the R2 bucket and upload artifacts:
+#        wrangler r2 bucket create bct-artifacts
+#        wrangler r2 object put bct-artifacts/metadata.json \
+#            --file ../../data/processed/sample/metadata.json
+#        # ...repeat for fields_daily.json, climatology.json, uncertainty.json,
+#        #    scenarios.json, sources.json, metrics.json
+#   3. Deploy:
+#        wrangler deploy
+#   4. Point the frontend at it:
+#        NEXT_PUBLIC_API_BASE=https://<worker-subdomain>.workers.dev
+
+name = "bharat-climate-twin-edge"
+main = "worker.js"
+compatibility_date = "2024-11-01"
+
+# R2 bucket holding the precomputed serving artifacts (and, at scale, the
+# COG/PMTiles/Zarr/GeoParquet pyramids).
+[[r2_buckets]]
+binding = "ARTIFACTS"
+bucket_name = "bct-artifacts"
+
+# KV namespace for O(1) point/scenario lookups + hot cache. Replace the
+# placeholder id with the one returned by `wrangler kv:namespace create`.
+[[kv_namespaces]]
+binding = "KV"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"
+
+# Durable Objects (per-session scenario state) would be declared here at scale:
+# [[durable_objects.bindings]]
+# name = "SCENARIO_STATE"
+# class_name = "ScenarioState"
